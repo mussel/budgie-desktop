@@ -68,7 +68,7 @@
 </tr>
 <tr>
 <td class="function_type">
-<span class="returnvalue">GtkWidget</span> *
+<a href="../gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
 </td>
 <td class="function_name">
 <a class="link" href="BudgieApplet.html#budgie-applet-get-settings-ui" title="budgie_applet_get_settings_ui ()">budgie_applet_get_settings_ui</a> <span class="c_punctuation">()</span>
@@ -210,9 +210,9 @@
 <a name="BudgieApplet.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="screen">    <a href="../gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
     <span class="lineart">╰──</span> <a href="../gobject/gobject-The-Base-Object-Type.html#GInitiallyUnowned">GInitiallyUnowned</a>
-        <span class="lineart">╰──</span> GtkWidget
-            <span class="lineart">╰──</span> GtkContainer
-                <span class="lineart">╰──</span> GtkBin
+        <span class="lineart">╰──</span> <a href="../gtk2/GtkWidget.html">GtkWidget</a>
+            <span class="lineart">╰──</span> <a href="../gtk2/GtkContainer.html">GtkContainer</a>
+                <span class="lineart">╰──</span> <a href="../gtk2/GtkBin.html">GtkBin</a>
                     <span class="lineart">╰──</span> BudgieApplet
 </pre>
 </div>
@@ -225,9 +225,9 @@ provided by, and instaniated by, your <a class="link" href="BudgiePlugin.html" t
 to achieve better integration with the overall desktop. At the bare minimum
 you should at least ensure that your applet respects the sizes exposed by
 the managing panel, via the <a class="link" href="BudgieApplet.html#BudgieApplet-panel-size-changed" title="The “panel-size-changed” signal"><span class="type">“panel-size-changed”</span></a> signal.</p>
-<p>BudgieApplet extends <span class="type">GtkBin</span> to leave you free to make your own choices
+<p>BudgieApplet extends <a href="../gtk2/GtkBin.html"><span class="type">GtkBin</span></a> to leave you free to make your own choices
 on internal applet layout and configuration. Do note, however, that the
-panel implementation will not call <span class="type">gtk_widget_show_all</span>, it is solely
+panel implementation will not call <a href="../gtk2/GtkWidget.html#gtk-widget-show-all"><span class="type">gtk_widget_show_all</span></a>, it is solely
 your responsibility to ensure all of your contents are displayed. This
 is to enable applet's to contextually hide part of their user interface
 when required.</p>
@@ -257,64 +257,33 @@ that live within it, the panel will relay actions to applets that have
 set their <a class="link" href="BudgieApplet.html#BudgieApplet--supported-actions" title="The “supported-actions” property"><span class="type">“supported-actions”</span></a> to a matching bitmask.</p>
 <p>For example, if we wish to listen for Menu Key events, we can simply do
 the following in C:</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="type">static</span> <span class="type">void</span> my_applet_invoke_action(BudgieApplet *applet, BudgiePanelAction action)
-{
-        <span class="keyword">if</span> (action == BUDGIE_PANEL_ACTION_MENU) {
-                my_applet_do_predict_the_lottery(MY_APPLET(applet));
-        }
-}
+<div class="informalexample"><pre class="programlisting">
 
-<span class="type">static</span> <span class="type">void</span> my_class_init(GObjectClass *class)
-{
-        MyClass *mc = MY_CLASS(klass);
-        ..
-        mc-&gt;invoke_action = my_applet_invoke_action;
-}</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+     static void my_applet_invoke_action(BudgieApplet *applet, BudgiePanelAction action)
+     {
+             if (action == BUDGIE_PANEL_ACTION_MENU) {
+                     my_applet_do_predict_the_lottery(MY_APPLET(applet));
+             }
+     }
 
+     static void my_class_init(GObjectClass *class)
+     {
+             MyClass *mc = MY_CLASS(klass);
+             ..
+             mc-&gt;invoke_action = my_applet_invoke_action;
+     }
+</pre></div>
 <p></p>
 <p>Likewise, a Vala implementation might look like the following:</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1
-2
-3
-4
-5
-6</pre></td>
-        <td class="listing_code"><pre class="programlisting">public override <span class="type">void</span> invoke_action(Budgie.PanelAction action)
-{
-    <span class="keyword">if</span> (action == Budgie.PanelAction.MENU) {
-        this.predict_the_lottery();
-    }
-}</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+<div class="informalexample"><pre class="programlisting">
 
+     public override void invoke_action(Budgie.PanelAction action)
+     {
+         if (action == Budgie.PanelAction.MENU) {
+             this.predict_the_lottery();
+         }
+     }
+</pre></div>
 <p></p>
 <div class="refsect3">
 <a name="id-1.2.2.9.3.12"></a><h4>Parameters</h4>
@@ -347,7 +316,7 @@ a settings UI</p>
 <hr>
 <div class="refsect2">
 <a name="budgie-applet-get-settings-ui"></a><h3>budgie_applet_get_settings_ui ()</h3>
-<pre class="programlisting"><span class="returnvalue">GtkWidget</span> *
+<pre class="programlisting"><a href="../gtk2/GtkWidget.html"><span class="returnvalue">GtkWidget</span></a> *
 budgie_applet_get_settings_ui (<em class="parameter"><code><a class="link" href="BudgieApplet.html" title="BudgieApplet"><span class="type">BudgieApplet</span></a> *self</code></em>);</pre>
 <p>For applets that need to expose settings, they should both override the
 <span class="type">“supports_settings”</span> method and return a new widget instance
@@ -445,8 +414,21 @@ register your popover with the panel manager.</p>
 panel. It is a requirement to register, otherwise the panel will not
 know when to expand and collapse the main panel harness to accomdate
 the GtkPopover.</p>
-<p><em class="parameter"><code>manager</code></em>
-: (nullable)</p>
+<div class="refsect3">
+<a name="id-1.2.2.9.11.7"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>manager</p></td>
+<td class="parameter_description"><p>. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+</tr></tbody>
+</table></div>
+</div>
 </div>
 <hr>
 <div class="refsect2">
@@ -460,7 +442,7 @@ budgie_applet_get_supported_actions (<em class="parameter"><code><a class="link"
 <a name="BudgieApplet.other_details"></a><h2>Types and Values</h2>
 <div class="refsect2">
 <a name="BUDGIE-APPLET-KEY-NAME:CAPS"></a><h3>BUDGIE_APPLET_KEY_NAME</h3>
-<pre class="programlisting">#define BUDGIE_APPLET_KEY_NAME  "name"
+<pre class="programlisting">#define BUDGIE_APPLET_KEY_NAME "name"
 </pre>
 </div>
 <hr>
@@ -472,7 +454,7 @@ budgie_applet_get_supported_actions (<em class="parameter"><code><a class="link"
 <hr>
 <div class="refsect2">
 <a name="BUDGIE-APPLET-KEY-POS:CAPS"></a><h3>BUDGIE_APPLET_KEY_POS</h3>
-<pre class="programlisting">#define BUDGIE_APPLET_KEY_POS   "position"
+<pre class="programlisting">#define BUDGIE_APPLET_KEY_POS "position"
 </pre>
 </div>
 <hr>
@@ -517,11 +499,12 @@ a global fashion (such as via the D-BUS API)</p>
 <pre class="programlisting">struct BudgieAppletClass {
         GtkBinClass parent_class;
 
-        void        (*invoke_action)    (BudgieApplet *self, BudgiePanelAction action);
-        gboolean   (*supports_settings) (BudgieApplet *self);
-        GtkWidget *(*get_settings_ui)   (BudgieApplet *self);
-        void        (*panel_size_changed) (BudgieApplet *applet, int panel_size, int icon_size, int small_icon_size);
-        void        (*update_popovers)     (BudgieApplet *applet, BudgiePopoverManager *manager);
+        void (*invoke_action)(BudgieApplet *self, BudgiePanelAction action);
+        gboolean (*supports_settings)(BudgieApplet *self);
+        GtkWidget *(*get_settings_ui)(BudgieApplet *self);
+        void (*panel_size_changed)(BudgieApplet *applet, int panel_size, int icon_size,
+                                   int small_icon_size);
+        void (*update_popovers)(BudgieApplet *applet, BudgiePopoverManager *manager);
 
         gpointer padding[12];
 };

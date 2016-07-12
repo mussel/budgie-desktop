@@ -62,56 +62,29 @@ to extend the functionality of the Budgie Panel. In reality, the vast
 majority of the work is actually implemented in <a class="link" href="BudgieApplet.html" title="BudgieApplet"><span class="type">BudgieApplet</span></a>.</p>
 <p>Implementations must implement the <a class="link" href="BudgiePlugin.html#budgie-plugin-get-panel-widget" title="budgie_plugin_get_panel_widget ()"><span class="type">budgie_plugin_get_panel_widget</span></a> method,
 and provide a new instance of their implementation of the BudgieApplet:</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="type">static</span> BudgieApplet *my_type_get_panel_widget(BudgiePlugin *self, gchar *uuid)
-{
-        <span class="keyword">return</span> my_applet_new(uuid);
-}
+<div class="informalexample"><pre class="programlisting">
 
-<span class="type">static</span> <span class="type">void</span> my_class_init(GObjectClass *klass)
-{
-        MyClass *mc = MY_CLASS(klass);
-        ...
-        mc-&gt;get_panel_widget = my_type_get_panel_widget;
-}</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+     static BudgieApplet *my_type_get_panel_widget(BudgiePlugin *self, gchar *uuid)
+     {
+             return my_applet_new(uuid);
+     }
 
+     static void my_class_init(GObjectClass *klass)
+     {
+             MyClass *mc = MY_CLASS(klass);
+             ...
+             mc-&gt;get_panel_widget = my_type_get_panel_widget;
+     }
+</pre></div>
 <p></p>
 <p>In Vala we would achieve like so:</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1
-2
-3
-4</pre></td>
-        <td class="listing_code"><pre class="programlisting">public Budgie.Applet get_panel_widget(string uuid)
-{
-    <span class="keyword">return</span> new MyApplet();
-}</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+<div class="informalexample"><pre class="programlisting">
 
+     public Budgie.Applet get_panel_widget(string uuid)
+     {
+         return new MyApplet();
+     }
+</pre></div>
 <p></p>
 </div>
 <div class="refsect1">
