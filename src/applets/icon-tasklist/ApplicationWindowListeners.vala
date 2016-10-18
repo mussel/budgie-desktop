@@ -24,3 +24,8 @@ public interface AttentionStatusListener
     public abstract void attention_status_changed(ApplicationWindow appwin,
                                                   bool needs_attention );
 }
+
+public interface ActiveStatusListener : Object
+{
+    public abstract void set_active(bool value);
+}
