@@ -137,6 +137,41 @@ public class IconTasklistApplet : Budgie.Applet, ButtonManager, WindowManager, A
         show_all();
     }
 
+    /**
+     * Hack for adding custom style to the icon-tasklist without changing the
+     * main theme files.
+     * This css adds the styling necessary for highlighting the active window's
+     * switch button in the window list dropdown
+     */
+    private void configure_custom_css_style()
+    {
+        var screen = Gdk.Screen.get_default();
+        var css_provider = new Gtk.CssProvider();
+        string style = """
+        .windowlist_row{
+            padding-left: 0px;
+        }
+
+        .active {
+            background-color: #5294E2;
+        }
+
+        .active_indicator {
+            border-width: 3px;
+            border-left-width: 0px;
+            border-right-width: 0px;
+            border-style: solid;
+            border-color: transparent;
+
+        padding: 1px;
+        }
+        """;
+
+        css_provider.load_from_data(style, style.length);
+        Gtk.StyleContext.add_provider_for_screen(screen, css_provider,
+                Gtk.STYLE_PROVIDER_PRIORITY_USER);
+    }
+
     void set_icons_size()
     {
         unowned Wnck.Window? btn_key = null;
