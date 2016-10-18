@@ -10,7 +10,7 @@
  * (at your option) any later version.
  */
 
-public class WindowListItem: Gtk.Revealer, NameChangeListener
+public class WindowListItem: Gtk.Revealer, NameChangeListener, ActiveStatusListener
 {
 
     private Gtk.Box layout;

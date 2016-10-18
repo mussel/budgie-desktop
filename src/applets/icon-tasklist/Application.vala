@@ -170,6 +170,11 @@ public class Application: AttentionStatusListener, IconChangeListener, ScreenPro
         var new_active_appwin = appwindow_map[window];
         // prevent unnecessary work if the new active window is the same as before
         if (new_active_appwin != active_appwin) {
+            if (active_appwin != null) {
+                active_appwin.set_active(false);
+            }
+
+            new_active_appwin.set_active(true);
             active_appwin = new_active_appwin;
             button.update_icon(window);
         }

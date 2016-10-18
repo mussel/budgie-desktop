@@ -51,6 +51,7 @@ public class WindowListView
         // set the row object as the listener for the window's name change
         // event
         appwin.set_name_change_listener(win_row);
+        appwin.set_active_status_listener(win_row);
     }
 
     /**
