@@ -133,6 +133,7 @@ public class IconTasklistApplet : Budgie.Applet, ButtonManager, WindowManager, A
         pinned.drag_data_received.connect(on_drag_data_received);
 
         get_style_context().add_class("icon-tasklist");
+        configure_custom_css_style();
 
         show_all();
     }

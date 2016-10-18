@@ -69,6 +69,7 @@ public class WindowListView
         window_listbox.insert(new_item, -1);
         // prevent new_item's parent(ListBoxRow) to be focusable
         new_item.get_parent().set_can_focus(false);
+        new_item.get_parent().get_style_context().add_class("windowlist_row");
         new_item.get_parent().show_all();
 
         return new_item;
