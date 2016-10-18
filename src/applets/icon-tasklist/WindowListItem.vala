@@ -22,6 +22,7 @@ public class WindowListItem: Gtk.Revealer, NameChangeListener, ActiveStatusListe
     private unowned ApplicationWindow? appwin = null;
     private unowned WindowManager? window_manager = null;
     private UrgencyAnimation urgency_animation;
+    private Gtk.Box? active_indicator = null;
 
     public WindowListItem(string window_name, ApplicationWindow appwin, WindowManager window_manager)
     {
@@ -29,9 +30,15 @@ public class WindowListItem: Gtk.Revealer, NameChangeListener, ActiveStatusListe
         configure_window_close_button();
         urgency_animation = new UrgencyAnimation(this,
                                                  UrgencyAnimation.INFINITE_CYCLE_NUM);
-        layout = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 10);
+        layout = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 7);
+        var active_indicator_layout = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 3);
 
-        layout.pack_start(window_switch_btn, true, true, 0);
+
+        active_indicator = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+        active_indicator_layout.pack_start(active_indicator, true, true, 0);
+        active_indicator_layout.pack_start(window_switch_btn, true, true, 0);
+
+        layout.pack_start(active_indicator_layout, true, true, 0);
         layout.pack_start(window_close_btn, true, true, 0);
         set_window_name(window_name);
         this.appwin = appwin;
@@ -42,6 +49,7 @@ public class WindowListItem: Gtk.Revealer, NameChangeListener, ActiveStatusListe
         set_reveal_child(true);
         // allows the glow of attention animation to surround the whole element
         layout.set_border_width (1);
+        active_indicator.get_style_context().add_class("active_indicator");
         show_all();
     }
 
@@ -135,5 +143,14 @@ public class WindowListItem: Gtk.Revealer, NameChangeListener, ActiveStatusListe
     public void remove_switch_button_from_group(Gtk.SizeGroup group)
     {
         group.remove_widget(window_switch_btn);
+    }
+
+    public void set_active(bool is_active)
+    {
+        if (is_active) {
+            active_indicator.get_style_context().add_class("active");
+        } else {
+            active_indicator.get_style_context().remove_class("active");
+        }
     }
 }
