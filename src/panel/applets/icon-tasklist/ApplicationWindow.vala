@@ -15,6 +15,7 @@ public class ApplicationWindow
     private unowned NameChangeListener? name_listener;
     private unowned IconChangeListener? icon_listener;
     private unowned AttentionStatusListener? attention_status_listener;
+    private ActiveStatusListener? active_status_listener = null;
 
     private ulong icon_changed_id = 0;
     private ulong name_changed_id = 0;
@@ -46,6 +47,7 @@ public class ApplicationWindow
         this.window.disconnect(state_changed_id);
         // We must call this to free the WindowMenu instance
         this.menu.clear();
+        active_status_listener = null;
     }
 
     private void update_icon()
@@ -101,6 +103,11 @@ public class ApplicationWindow
         attention_status_listener = listener;
     }
 
+    public void set_active_status_listener(ActiveStatusListener listener)
+    {
+        active_status_listener = listener;
+    }
+
     public bool needs_attention()
     {
         return attention_requested;
@@ -115,5 +122,12 @@ public class ApplicationWindow
     {
         this.menu.clear();
         this.menu = menu;
+    }
+
+    public void set_active(bool active)
+    {
+        if (active_status_listener != null) {
+            active_status_listener.set_active(active);
+        }
     }
 }
