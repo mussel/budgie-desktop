@@ -344,7 +344,7 @@ public class PinnedIconButton : IconButton
         launch_context.launch_failed.connect(this.on_launch_failed);
 
         drag_data_get.connect((widget, context, selection_data, info, time)=> {
-            selection_data.set(selection_data.get_target(), 8, (uchar []) application.get_info().get_id().to_utf8());
+            selection_data.set(selection_data.get_target(), 8, (uchar[]) application.get_info().get_id().to_utf8());
         });
     }
 
