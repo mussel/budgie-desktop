@@ -47,7 +47,7 @@ public class WindowListView
     {
         WindowListItem win_row = add_window_list_item(appwin);
 
-        window_row_map [appwin] = win_row;
+        window_row_map[appwin] = win_row;
         // set the row object as the listener for the window's name change
         // event
         appwin.set_name_change_listener(win_row);
@@ -75,7 +75,7 @@ public class WindowListView
 
     public void remove_window(ApplicationWindow appwin)
     {
-        var list_row = window_row_map [appwin];
+        var list_row = window_row_map[appwin];
 
         // Handles the removal, with animation, of WindowListItem from the ListBox
         list_row.gracefully_die(window_listbox);
@@ -131,13 +131,13 @@ public class WindowListView
 
     public void begin_attention_request(ApplicationWindow appwin)
     {
-        var row = window_row_map [appwin];
+        var row = window_row_map[appwin];
         row.begin_attention_request();
     }
 
     public void end_attention_request(ApplicationWindow appwin)
     {
-        var row = window_row_map [appwin];
+        var row = window_row_map[appwin];
         row.end_attention_request();
     }
 
