@@ -354,7 +354,7 @@ public class IconTasklistApplet : Budgie.Applet, ButtonManager, WindowManager, A
 
     private Application? get_pinned_application_by_id(string app_id)
     {
-        return pinned_apps.contains (app_id) ? pinned_apps [app_id] : null;
+        return pinned_apps.contains (app_id) ? pinned_apps[app_id] : null;
     }
 
     private Application? get_pinned_application(string? startup_id, string? app_id)
@@ -374,10 +374,10 @@ public class IconTasklistApplet : Budgie.Applet, ButtonManager, WindowManager, A
     void register_window_opened(string? app_id, Wnck.Window window, Application app)
     {
         // associate the window with its parent application
-        win_to_app_map [window] = app;
+        win_to_app_map[window] = app;
         if (app_id != null && !opened_apps.contains(app_id)) {
             // first window of application. Application not registered as opened yet
-            opened_apps [app_id] = app;
+            opened_apps[app_id] = app;
             // register the window list of the new application
             popover_manager.register_popover(app.get_button(), app.get_window_list_popover());
         }
@@ -416,15 +416,15 @@ public class IconTasklistApplet : Budgie.Applet, ButtonManager, WindowManager, A
         Application? old_app = null;
 
         if (opened_apps.contains(app_id)) {
-            old_app = opened_apps [app_id];
+            old_app = opened_apps[app_id];
         } else if (pinned_apps.contains(app_id)) {
-            old_app = pinned_apps [app_id];
+            old_app = pinned_apps[app_id];
         }
 
         if (old_app != null) {
             // application was either pinned or already opened. Either way,
             // we are going to use the old application object
-            var new_app = win_to_app_map [window];
+            var new_app = win_to_app_map[window];
             tmp_apps.push_tail(new_app);
             new_app.remove_window(window);
 
@@ -455,7 +455,7 @@ public class IconTasklistApplet : Budgie.Applet, ButtonManager, WindowManager, A
             return false;
         } else {
             // application was not registered yet. Now with the app_id, register it
-            var app = win_to_app_map [window];
+            var app = win_to_app_map[window];
             // re-register the application
             register_window_opened(app_id, window, app);
             // we continue to use the same application object
@@ -481,7 +481,7 @@ public class IconTasklistApplet : Budgie.Applet, ButtonManager, WindowManager, A
         // check if the app is already opened or if it is a pinned app. Either
         // way we do not need add another button to the tray
         if (app_id != null && opened_apps.contains(app_id)) {
-            application = opened_apps [app_id];
+            application = opened_apps[app_id];
             application.add_window(window);
         } else if ((application = get_pinned_application(launch_id, app_id)) != null) {
             application.add_window(window);
@@ -509,7 +509,7 @@ public class IconTasklistApplet : Budgie.Applet, ButtonManager, WindowManager, A
         if (!win_to_app_map.contains(window)) {
             return;
         }
-        app = win_to_app_map [window];
+        app = win_to_app_map[window];
         btn = app.get_button();
         // unregister the window from application
         app.remove_window(window);
@@ -534,7 +534,7 @@ public class IconTasklistApplet : Budgie.Applet, ButtonManager, WindowManager, A
         new_active = screen.get_active_window();
         if (new_active != null && win_to_app_map.contains(new_active)) {
             // get window associated with new active window
-            var app = win_to_app_map [new_active];
+            var app = win_to_app_map[new_active];
             btn = app.get_button();
             // make it the new active button
             replace_active_button(btn);
@@ -641,7 +641,7 @@ public class IconTasklistApplet : Budgie.Applet, ButtonManager, WindowManager, A
         popover_manager.register_popover(new_btn, app.get_window_list_popover());
     }
 
-    protected void insert_new_pinned_buttons(string [] files)
+    protected void insert_new_pinned_buttons(string[] files)
     {
 
         /* We don't actually remove anything >_> */
@@ -660,7 +660,7 @@ public class IconTasklistApplet : Budgie.Applet, ButtonManager, WindowManager, A
 
             if (opened_apps.contains(info.get_id())) {
                 // application being pinned is already opened
-                pin_app = opened_apps [info.get_id()];
+                pin_app = opened_apps[info.get_id()];
                 var btn = pin_app.get_button();
 
                 // replace application's pinned button by a non-pinned version
@@ -681,7 +681,7 @@ public class IconTasklistApplet : Budgie.Applet, ButtonManager, WindowManager, A
         }
     }
 
-    private void remove_unpinned_buttons(string [] files)
+    private void remove_unpinned_buttons(string[] files)
     {
         string[] removals = {};
         /* Conversely, remove ones which have been unset. */
