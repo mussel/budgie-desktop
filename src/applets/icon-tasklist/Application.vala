@@ -50,7 +50,7 @@ public class Application: AttentionStatusListener, IconChangeListener, ScreenPro
         WindowMenu menu = new WindowMenu(window, app_info, settings, this, this);
         ApplicationWindow appwin = new ApplicationWindow(window, menu);
 
-        appwindow_map [window] = appwin;
+        appwindow_map[window] = appwin;
         window_list.add_window(appwin);
         set_active_window(window);
 
@@ -72,7 +72,7 @@ public class Application: AttentionStatusListener, IconChangeListener, ScreenPro
     {
         // make sure we have this window
         assert_window_exists(window);
-        ApplicationWindow appwin = appwindow_map [window];
+        ApplicationWindow appwin = appwindow_map[window];
 
         // remove it from the window list popover
         window_list.remove_window(appwin);
@@ -166,7 +166,7 @@ public class Application: AttentionStatusListener, IconChangeListener, ScreenPro
 
     public void set_active_window(Wnck.Window window)
     {
-        var new_active_appwin = appwindow_map [window];
+        var new_active_appwin = appwindow_map[window];
         // prevent unnecessary work if the new active window is the same as before
         if (new_active_appwin != active_appwin) {
             active_appwin = new_active_appwin;
@@ -326,9 +326,9 @@ public class Application: AttentionStatusListener, IconChangeListener, ScreenPro
                         // object instance. So we need to do some housekeeping and
                         // re-configure things based on app_info
                         WindowMenu menu = new WindowMenu(win, app_info, settings, this, this);
-                        appwindow_map [win].set_menu(menu);
+                        appwindow_map[win].set_menu(menu);
                         // reconfigure button now using app_info
-                        button.configure_button(appwindow_map [win]);
+                        button.configure_button(appwindow_map[win]);
                     }
                 }
             });
