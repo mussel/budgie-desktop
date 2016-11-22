@@ -113,19 +113,10 @@ public class WindowMenu
         menu.append(pinnage);
         menu.append(unpinnage);
 
-        close_all_windows_opt.activate.connect(()=> {
-            application.close_all_windows();
-        });
+        close_all_windows_opt.activate.connect(close_all_windows);
         /* Handle running instance pin/unpin */
-        pinnage.activate.connect(()=> {
-            assert(pinning_enabled);
-            DesktopHelper.set_pinned(settings, app_info, true);
-        });
-
-        unpinnage.activate.connect(()=> {
-            assert(unpinning_enabled);
-            DesktopHelper.set_pinned(settings, app_info, false);
-        });
+        pinnage.activate.connect(pin_application);
+        unpinnage.activate.connect(unpin_application);
 
         if (app_info != null) {
             // Desktop app actions =)
@@ -139,24 +130,48 @@ public class WindowMenu
             foreach (var action in actions) {
                 var display_name = app_info.get_action_name(action);
                 var item = new Gtk.MenuItem.with_label(display_name);
+
                 item.set_data("__aname", action);
-                item.activate.connect(()=> {
-                    string? act = item.get_data("__aname");
-                    if (act == null) {
-                        return;
-                    }
-                    // Never know.
-                    if (app_info == null) {
-                        return;
-                    }
-                    var launch_context = Gdk.Screen.get_default().get_display().get_app_launch_context();
-                    launch_context.set_screen(screen_provider.get_screen());
-                    launch_context.set_timestamp(Gdk.CURRENT_TIME);
-                    app_info.launch_action(act, launch_context);
+                item.activate.connect(() => {
+                    launch_application(item.get_data("__aname"));
                 });
                 item.show_all();
                 menu.append(item);
             }
         }
     }
+
+    private void launch_application(string? act)
+    {
+        if (act == null) {
+            return;
+        }
+        // Never know.
+        if (app_info == null) {
+            return;
+        }
+        var launch_context = Gdk.Screen.get_default().get_display().get_app_launch_context();
+        launch_context.set_screen(screen_provider.get_screen());
+        launch_context.set_timestamp(Gdk.CURRENT_TIME);
+        app_info.launch_action(act, launch_context);
+
+    }
+
+    private void pin_application()
+    {
+        assert(pinning_enabled);
+        DesktopHelper.set_pinned(settings, app_info, true);
+    }
+
+    private void unpin_application()
+    {
+        assert(unpinning_enabled);
+        DesktopHelper.set_pinned(settings, app_info, false);
+    }
+
+    private void close_all_windows()
+    {
+        application.close_all_windows();
+    }
+
 }
