@@ -438,9 +438,8 @@ public class PinnedIconButton : IconButton
     public override void reset()
     {
         base.reset();
-        string launch_text = _("Launch");
 
-        set_tooltip_text("%s %s".printf(launch_text, application.get_info().get_display_name()));
+        set_tooltip_text(application.get_info().get_display_name());
         id = null;
         reset_icon();
     }
