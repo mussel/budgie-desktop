@@ -120,7 +120,6 @@ class UrgencyAnimation
     private bool draw(Cairo.Context cr)
     {
         if (!is_animation_in_progress()) {
-            message ("Intercepting draw signal but animation is not in progress");
             return false;
         }
 
