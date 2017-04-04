@@ -13,6 +13,15 @@ applet_icontasklist_sources = [
     'AppSystem.vala',
     'IconTasklistApplet.vala',
     'Buttons.vala',
+    'Application.vala',
+    'ApplicationWindow.vala',
+    'ApplicationWindowListeners.vala',
+    'ButtonManager.vala',
+    'UrgencyAnimation.vala',
+    'WindowListItem.vala',
+    'WindowListView.vala',
+    'WindowManager.vala',
+    'WindowMenu.vala'
 ]
 
 applet_icontasklist_deps = [
