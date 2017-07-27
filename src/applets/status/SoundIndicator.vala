@@ -37,6 +37,7 @@ public class SoundIndicator : Gtk.Bin
 
     /** Track the scale value_changed to prevent cross-noise */
     private ulong scale_id;
+    private SoundSettingsManager? sound_settings = null;
 
     public SoundIndicator()
     {
@@ -58,6 +59,9 @@ public class SoundIndicator : Gtk.Bin
 
         this.get_style_context().add_class("sound-applet");
         this.popover.get_style_context().add_class("sound-popover");
+
+        sound_settings = new SoundSettingsManager();
+        sound_settings.on_allow_volume_amp_changed.connect(on_allow_volume_amp_changed);
 
         /* Catch scroll wheel events */
         ebox.add_events(Gdk.EventMask.SCROLL_MASK);
@@ -186,21 +190,8 @@ public class SoundIndicator : Gtk.Bin
                 return false;
         }
 
-        /* Ensure sanity + amp capability */
-        var max_amp = mixer.get_vol_max_amplified();
-        var norm = mixer.get_vol_max_norm();
-        if (max_amp < norm) {
-            max_amp = norm;
-        }
-
-        if (vol > max_amp) {
-            vol = (uint32)max_amp;
-        }
-
-        /* Prevent amplification using scroll on sound indicator */
-        if (vol >= norm) {
-            vol = (uint32)norm;
-        }
+        var vol_max = get_max_volume();
+        vol = uint32.min(vol, (uint32)vol_max);
 
         SignalHandler.block(volume_scale, scale_id);
         if (stream.set_volume(vol)) {
@@ -211,17 +202,31 @@ public class SoundIndicator : Gtk.Bin
         return true;
     }
 
+    void on_allow_volume_amp_changed(bool value)
+    {
+        update_volume();
+    }
+
+    double get_max_volume()
+    {
+        if (sound_settings.allow_volume_amp) {
+            return mixer.get_vol_max_amplified();
+        } else {
+            return mixer.get_vol_max_norm();
+        }
+    }
+
     /**
      * Update our icon when something changed (volume/mute)
      */
     protected void update_volume()
     {
-        var vol_norm = mixer.get_vol_max_norm();
+        var vol_max = get_max_volume();
         var vol = stream.get_volume();
 
         /* Same maths as computed by volume.js in gnome-shell, carried over
          * from C->Vala port of budgie-panel */
-        int n = (int) Math.floor(3*vol/vol_norm)+1;
+        int n = (int) Math.floor(3*vol/vol_max)+1;
         string image_name;
 
         // Work out an icon
@@ -242,24 +247,20 @@ public class SoundIndicator : Gtk.Bin
         }
         widget.set_from_icon_name(image_name, Gtk.IconSize.MENU);
 
-        var vol_max = mixer.get_vol_max_amplified();
-
         // Each scroll increments by 5%, much better than units..
         step_size = vol_max / 20;
 
         // This usually goes up to about 150% (152.2% on mine though.)
-        var pct = ((float)vol / (float)vol_norm)*100;
+        var pct = ((float)vol / (float)vol_max)*100;
         var ipct = (uint)pct;
         widget.set_tooltip_text(@"$ipct%");
 
-        /* We're ignoring anything beyond our vol_norm.. */
+        /* We're ignoring anything beyond our vol_max.. */
         SignalHandler.block(volume_scale, scale_id);
-        volume_scale.set_range(0, vol_norm);
-        if (vol > vol_norm) {
-            volume_scale.set_value(vol);
-        } else {
-            volume_scale.set_value(vol);
-        }
+        volume_scale.set_range(0, vol_max);
+        vol = uint32.min(vol, (uint32)vol_max);
+        volume_scale.set_value(vol);
+
         volume_scale.get_adjustment().set_page_increment(step_size);
         SignalHandler.unblock(volume_scale, scale_id);
 
@@ -294,14 +295,10 @@ public class SoundIndicator : Gtk.Bin
             return;
         }
         int32 vol = (int32)stream.get_volume();
-        var max_norm = mixer.get_vol_max_norm();
+        int32 vol_max = (int32)get_max_volume();
         vol += (int32)increment;
 
-        if (vol < 0) {
-            vol = 0;
-        } else if (vol > max_norm) {
-            vol = (int32) max_norm;
-        }
+        vol = vol.clamp(0, vol_max);
 
         SignalHandler.block(volume_scale, scale_id);
         if (stream.set_volume((uint32)vol)) {
