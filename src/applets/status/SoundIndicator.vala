@@ -204,6 +204,9 @@ public class SoundIndicator : Gtk.Bin
 
     void on_allow_volume_amp_changed(bool value)
     {
+        if (mixer.get_state() != Gvc.MixerControlState.READY) {
+            return;
+        }
         update_volume();
     }
 
