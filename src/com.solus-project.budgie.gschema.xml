@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema id="com.solus-project.budgie" path="/com/solus-project/budgie/" gettext-domain="budgie">
+        <key name='sound-allow-volume-amp' type='b'>
+            <default>false</default>
+            <description>Allow setting sound volume greater than 100%</description>
+        </key>
+    </schema>
+</schemalist>
