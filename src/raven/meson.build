@@ -19,6 +19,7 @@ libraven_sources = [
     'powerstrip.vala',
     'raven.vala',
     'sound.vala',
+    'sound_util.vala',
     'mpris/MprisClient.vala',
     'mpris/MprisGui.vala',
     'mpris/MprisWidget.vala',
