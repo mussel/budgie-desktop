@@ -1,8 +1,8 @@
 /*
  * This file is part of budgie-desktop
- * 
+ *
  * Copyright © 2015-2017 Budgie Desktop Developers
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -32,6 +32,7 @@ public class SoundWidget : Gtk.Box
     private HashTable<uint,Gtk.RadioButton?> inputs;
     private Gvc.MixerStream? input_stream = null;
     private ulong input_notify_id = 0;
+    private SoundSettingsManager? sound_settings = null;
 
     private Budgie.HeaderWidget? header = null;
 
@@ -40,6 +41,8 @@ public class SoundWidget : Gtk.Box
         Object(orientation: Gtk.Orientation.VERTICAL);
 
         get_style_context().add_class("audio-widget");
+
+        sound_settings = new SoundSettingsManager();
 
         /* TODO: Fix icon */
         scale = new Gtk.Scale.with_range(Gtk.Orientation.HORIZONTAL, 0, 100, 10);
@@ -72,6 +75,9 @@ public class SoundWidget : Gtk.Box
         main_layout.margin_end = 12;
 
         ebox.add(main_layout);
+
+        /* row containing extra sound options */
+        build_sound_options_row(main_layout);
 
         /* Output row */
         var row = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
@@ -110,6 +116,53 @@ public class SoundWidget : Gtk.Box
         expander.expanded = true;
 
         mixer.open();
+    }
+
+    void build_sound_options_row(Gtk.Box main_layout)
+    {
+
+        /* Root box that contains set of options and label */
+        var root = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+        var label = new Gtk.Label(_("Sound Options"));
+        var separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
+
+        label.get_style_context().add_class("heading");
+        label.halign = Gtk.Align.START;
+        root.pack_start(label, true, true, 0);
+        root.pack_end(separator, true, true, 0);
+        separator.margin_top = 12;
+        separator.margin_bottom = 12;
+
+
+        /* Box for grouping available sound options */
+        var options_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+        options_box.margin_left = 12;
+
+        /* Option for allowing sound greater than 100% */
+        var allow_volume_amp_row = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+        var allow_volume_amp_label = new Gtk.Label(_("Allow volume louder than 100%"));
+        var allow_volume_amp_switch = new Gtk.Switch();
+        allow_volume_amp_switch.active = sound_settings.allow_volume_amp;
+        allow_volume_amp_row.pack_start(allow_volume_amp_label, true, true, 0);
+        allow_volume_amp_row.pack_end(allow_volume_amp_switch, false, false, 0);
+        allow_volume_amp_switch.state_set.connect(on_max_volume_changed);
+
+        /* Add all options */
+        options_box.pack_start(allow_volume_amp_row, false, false, 0);
+
+        root.pack_start(options_box, false, false, 0);
+        main_layout.pack_start(root, false, false, 0);
+    }
+
+    /* Changed the max volume allowed */
+    public bool on_max_volume_changed(bool state)
+    {
+        sound_settings.allow_volume_amp = state;
+        // update the scale range, volume and volume icon
+        update_volume();
+
+        // run the default state change handler
+        return false;
     }
 
     /**
@@ -232,6 +285,15 @@ public class SoundWidget : Gtk.Box
         update_volume();
     }
 
+    double get_max_volume()
+    {
+        if (sound_settings.allow_volume_amp) {
+            return mixer.get_vol_max_amplified();
+        } else {
+            return mixer.get_vol_max_norm();
+        }
+    }
+
     void update_volume()
     {
         if (output_switch_id > 0) {
@@ -242,12 +304,12 @@ public class SoundWidget : Gtk.Box
             output_switch.active = !output_stream.is_muted;
         }
 
-        var vol_norm = mixer.get_vol_max_norm();
-        var vol = output_stream.get_volume();
+        var vol_max = get_max_volume();
+        var vol = double.min(output_stream.get_volume(), vol_max);
 
         /* Same maths as computed by volume.js in gnome-shell, carried over
          * from C->Vala port of budgie-panel */
-        int n = (int) Math.floor(3*vol/vol_norm)+1;
+        int n = (int) Math.floor(3*vol/vol_max)+1;
         string image_name;
 
         // Work out an icon
@@ -267,7 +329,6 @@ public class SoundWidget : Gtk.Box
             }
         }
         header.icon_name = image_name;
-        var vol_max = mixer.get_vol_max_norm();
 
         /* Each scroll increments by 5%, much better than units..*/
         var step_size = vol_max / 20;
