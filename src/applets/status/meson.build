@@ -13,6 +13,7 @@ applet_status_sources = [
     'StatusApplet.vala',
     'PowerIndicator.vala',
     'SoundIndicator.vala',
+    '../../raven/sound_util.vala'
 ]
 
 applet_status_deps = [
