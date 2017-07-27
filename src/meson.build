@@ -29,3 +29,9 @@ subdir('applets')
 
 # Finish up by doing the session
 subdir('session')
+
+# gschemas
+install_data(
+  'com.solus-project.budgie.gschema.xml',
+  install_dir: join_paths(datadir, 'glib-2.0', 'schemas')
+)
