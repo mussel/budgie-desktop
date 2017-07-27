@@ -32,6 +32,8 @@ public class SoundWidget : Gtk.Box
     private HashTable<uint,Gtk.RadioButton?> inputs;
     private Gvc.MixerStream? input_stream = null;
     private ulong input_notify_id = 0;
+
+    private Gtk.Switch? allow_volume_amp_switch;
     private SoundSettingsManager? sound_settings = null;
 
     private Budgie.HeaderWidget? header = null;
@@ -43,6 +45,7 @@ public class SoundWidget : Gtk.Box
         get_style_context().add_class("audio-widget");
 
         sound_settings = new SoundSettingsManager();
+        sound_settings.on_allow_volume_amp_changed.connect(on_allow_volume_amp_setting_changed);
 
         /* TODO: Fix icon */
         scale = new Gtk.Scale.with_range(Gtk.Orientation.HORIZONTAL, 0, 100, 10);
@@ -141,11 +144,11 @@ public class SoundWidget : Gtk.Box
         /* Option for allowing sound greater than 100% */
         var allow_volume_amp_row = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
         var allow_volume_amp_label = new Gtk.Label(_("Allow volume louder than 100%"));
-        var allow_volume_amp_switch = new Gtk.Switch();
+        allow_volume_amp_switch = new Gtk.Switch();
         allow_volume_amp_switch.active = sound_settings.allow_volume_amp;
         allow_volume_amp_row.pack_start(allow_volume_amp_label, true, true, 0);
         allow_volume_amp_row.pack_end(allow_volume_amp_switch, false, false, 0);
-        allow_volume_amp_switch.state_set.connect(on_max_volume_changed);
+        allow_volume_amp_switch.notify["active"].connect(on_allow_volume_amp_switch_active);
 
         /* Add all options */
         options_box.pack_start(allow_volume_amp_row, false, false, 0);
@@ -154,15 +157,30 @@ public class SoundWidget : Gtk.Box
         main_layout.pack_start(root, false, false, 0);
     }
 
-    /* Changed the max volume allowed */
-    public bool on_max_volume_changed(bool state)
+    void on_allow_volume_amp_switch_active()
     {
-        sound_settings.allow_volume_amp = state;
-        // update the scale range, volume and volume icon
+        update_volume_amp_setting(allow_volume_amp_switch.active);
         update_volume();
+    }
 
-        // run the default state change handler
-        return false;
+    void update_volume_amp_setting(bool value)
+    {
+        /* Changing this setting will trigger the signal 'on_allow_volume_amp_changed',
+         * but since we are the ones making the change, the callback is unnecessary.
+         * So, we disconnect from the signal before performing the change and then
+         * reconnect afterwards.
+        */
+        sound_settings.on_allow_volume_amp_changed.disconnect(on_allow_volume_amp_setting_changed);
+        sound_settings.allow_volume_amp = value;
+        sound_settings.on_allow_volume_amp_changed.connect(on_allow_volume_amp_setting_changed);
+    }
+
+    void on_allow_volume_amp_setting_changed()
+    {
+        if (mixer.get_state() == Gvc.MixerControlState.READY) {
+            /* Only trigger volume update if the mixer is ready */
+            update_volume();
+        }
     }
 
     /**
